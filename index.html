@@ -1,15 +1,40 @@
 <html>
   <head>
     <script src="script.js"></script>
+    <link rel="stylesheet" href="styles.css">
   </head>
-  <body>
+  <body style="display:flex;justify-content: space-around;">
     <div>
-      <label for="noteTextArea">Write a note:</label>
+      <div>
+        <label for="noteTextArea">Write a note</label>
+      </div>
+      <textarea rows="10" cols="100" id="noteTextArea" ></textarea>
+      <div style="display: flex; justify-content: space-between;margin-bottom:12px;">
+        <div>
+          <div>
+            <label for="noteTagsInput">Tag the note </label>
+          </div>
+          <input id="noteTagsInput" placeholder="Tags (enter to confirm tag)">
+          <button onclick="addTagToNote()">Add tag</button>
+        </div>
+        <div>
+          <button 
+            id="saveButton"
+            style="margin-top: 8px;"
+            onclick="onSaveNote()"
+            title="Ctrl + Enter to save"
+          >
+            Save note
+          </button>
+        </div>
+
+      </div>
+      <div id="savedNotesContainer"></div>
     </div>
-    <textarea rows="10" cols="100" id="noteTextArea" ></textarea>
     <div>
-      <button id="saveButton" onclick="onSaveNoteClick()">Save</button>
+      Tags
+        <div id="tagsContainer">
+        </div>
     </div>
-    <div id="savedNotesContainer"></div>
   </body>
 </html>
