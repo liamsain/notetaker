@@ -1,10 +1,14 @@
+body {
+ font-family: Arial, "Helvetica Neue", Helvetica, sans-serif; 
+}
 .notes__date-created {
   color:#4d4d4d;
   margin-top: 4px;
+  font-size: 12px;
 }
 
 .notes__note-container {
-  padding: 8px;
+  padding: 12px;
   margin-top: 8px;
   border-radius: 5px;
 -webkit-box-shadow: 1px 0px 8px 0px rgba(0,0,0,0.25); 
@@ -13,3 +17,5 @@ box-shadow: 1px 0px 8px 0px rgba(0,0,0,0.25);
 .notes__note-container p {
   margin: 4px;
 }
+
+textarea, input, button, select { font-family: inherit; font-size: inherit; }
