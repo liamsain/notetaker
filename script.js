@@ -1,13 +1,14 @@
 let notes = [];
 let activeNote = null;
-let tags = [];
+let tags = ['All'];
 
 class Note {
   constructor(config) {
     this.value = config.value || '';
     this.dateCreated = new Date();
     this.id = `note-${this.dateCreated.getTime()}`;
-    this.tags = [];
+    this.tags = ['All'];
+    this.visible = true;
   }
 
   get timeCreated() {
@@ -63,9 +64,10 @@ function addTagToNote() {
   }
   if (!tags.includes(noteTagsInputValue)) {
     tags.push(noteTagsInputValue);
-    activeNote.tags.push(noteTagsInputValue);
     renderTags();
   }
+
+  activeNote.tags.push(noteTagsInputValue);
 
   noteTagsInput.value = '';
 }
@@ -85,11 +87,15 @@ function renderNotes() {
     </div>
   `;
   notes.forEach(note => {
+    if (!note.visible) {
+      return;
+    }
     const div = document.createElement('div');
     div.innerHTML = getNoteHtml(note);
     container.appendChild(div);
   });
 }
+
 
 function renderTags() {
   const container = document.querySelector('#tagsContainer');
@@ -99,8 +105,17 @@ function renderTags() {
   tags.forEach(tag => {
     const p = document.createElement('p');
     p.innerHTML = tag;
+    p.onclick = () => filterNotesByTag(tag);
     container.appendChild(p);
   });
+}
+
+function filterNotesByTag(tag) {
+  notes = notes.map(note => {
+    note.visible = note.tags.includes(tag);
+    return note;
+  });
+  renderNotes();
 }
 
 function keydownListener(ev) {
@@ -114,4 +129,10 @@ function keydownListener(ev) {
 window.addEventListener('keydown', keydownListener);
 window.onload = () => {
   document.querySelector('#noteTextArea').focus();
+  document.querySelector('#noteTagsInput').addEventListener('keyup', ev => {
+    if (ev.key === 'Enter') {
+      addTagToNote();
+    }
+  });
+  renderTags();
 };
