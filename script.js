@@ -1,17 +1,36 @@
-let notes = [];
+const notesLocalStorageKey = 'notes-saved';
 let activeNote = null;
 let tags = ['All'];
 
-function saveNotes() {}
-function getSavedNotes() {}
+
+function getSavedNotes() {
+  let notes = [];
+  const rawNotes = localStorage.getItem(notesLocalStorageKey);
+  console.log(rawNotes);
+  if (rawNotes) {
+    notes = JSON.parse(rawNotes).map(x => new Note(x));
+  }
+  return notes;
+}
+
+function saveNote(note) {
+  const notes = getSavedNotes();
+  let existingNoteIndex = notes.findIndex(x => x.id === note.id);
+  if (existingNoteIndex !== -1) {
+    notes[existingNoteIndex] = note;
+  } else {
+    notes.push(note);
+  }
+  localStorage.setItem(notesLocalStorageKey, JSON.stringify(notes));
+}
 
 class Note {
   constructor(config) {
     this.value = config.value || '';
-    this.dateCreated = new Date();
-    this.id = `note-${this.dateCreated.getTime()}`;
-    this.tags = ['All'];
-    this.visible = true;
+    this.dateCreated = config.dateCreated ? new Date(config.dateCreated) : new Date();
+    this.id = config.id || `note-${this.dateCreated.getTime()}`;
+    this.tags = config.tags || ['All'];
+    this.visible = config.visible || true;
   }
 
   get timeCreated() {
@@ -41,27 +60,24 @@ function onSaveNote() {
   }
   if (activeNote) {
     activeNote.value = textarea.value;
-    const noteIsAlreadySaved = notes.find(note => note.id === activeNote.id);
-    if (!noteIsAlreadySaved) {
-      notes.push(activeNote);
-    }
+    saveNote(activeNote);
     activeNote = null;
   } else {
-    notes.push(new Note({
-      value: textarea.value
-    }));
+    saveNote(new Note({value: textarea.value}));
   }
   textarea.value = '';
   renderNotes();
 }
 
 function deleteNoteById(id) {
-  notes = notes.filter(note => note.id !== id);
+  let notes = getSavedNotes().filter(x => x.id !== id);
+
+  localStorage.setItem(notesLocalStorageKey, JSON.stringify(notes));
   renderNotes();
 }
 
 function editNoteById(id) {
-  activeNote = notes.find(note => note.id === id);
+  activeNote = getSavedNotes().find(note => note.id === id);
   document.querySelector('#noteTextArea').value = activeNote.value;
 }
 
@@ -90,7 +106,7 @@ function renderNotes() {
   while (container.firstChild) {
     container.removeChild(container.firstChild);
   }
-  notes.forEach(note => {
+  getSavedNotes().forEach(note => {
     if (!note.visible) {
       return;
     }
@@ -140,4 +156,5 @@ window.onload = () => {
     }
   });
   renderTags();
+  renderNotes();
 };
