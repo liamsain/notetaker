@@ -2,6 +2,9 @@ let notes = [];
 let activeNote = null;
 let tags = ['All'];
 
+function saveNotes() {}
+function getSavedNotes() {}
+
 class Note {
   constructor(config) {
     this.value = config.value || '';
@@ -16,6 +19,17 @@ class Note {
     const month = new Intl.DateTimeFormat('en', { month: 'short' }).format(this.dateCreated)
     const day = new Intl.DateTimeFormat('en', { day: '2-digit' }).format(this.dateCreated)
     return `${day}-${month}-${year}`;
+  }
+  get html() {
+    return `
+        <div id="\`${this.id}\`" class="notes__note-container">
+          <p style="margin-bottom: 12px;">${this.value}</p>
+          <p class="notes__date-created">${this.timeCreated}</p>
+          <p class="notes__note-tag">${this.tags.filter(x => x !== 'All').map(tag => tag + ', ')}</p>
+          <button onclick="deleteNoteById(\`${this.id}\`)">Delete</button>
+          <button onclick="editNoteById(\`${this.id}\`)">Edit</button>
+        </div>
+      `;
   }
 };
 
@@ -68,7 +82,6 @@ function addTagToNote() {
   }
 
   activeNote.tags.push(noteTagsInputValue);
-
   noteTagsInput.value = '';
 }
 
@@ -77,21 +90,12 @@ function renderNotes() {
   while (container.firstChild) {
     container.removeChild(container.firstChild);
   }
-  const getNoteHtml = note => `
-    <div id="\`${note.id}\`" class="notes__note-container">
-      <p>${note.value}</p>
-      <p class="notes__date-created">${note.timeCreated}</p>
-      <button onclick="deleteNoteById(\`${note.id}\`)">Delete</button>
-      <button onclick="editNoteById(\`${note.id}\`)">Edit</button>
-
-    </div>
-  `;
   notes.forEach(note => {
     if (!note.visible) {
       return;
     }
     const div = document.createElement('div');
-    div.innerHTML = getNoteHtml(note);
+    div.innerHTML = note.html;
     container.appendChild(div);
   });
 }
@@ -105,6 +109,7 @@ function renderTags() {
   tags.forEach(tag => {
     const p = document.createElement('p');
     p.innerHTML = tag;
+    p.classList.add("notes__tag");
     p.onclick = () => filterNotesByTag(tag);
     container.appendChild(p);
   });

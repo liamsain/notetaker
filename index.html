@@ -4,18 +4,24 @@
     <script src="script.js"></script>
     <link rel="stylesheet" href="styles.css">
   </head>
-  <body style="display:flex;justify-content: space-around">
+  <body style="display:flex;justify-content: flex-start;margin: 24px;">
+    <div style="min-width: 250px;margin-right: 24px;">
+      <p style="margin-top:0; font-weight: 600">Tags</p>
+        <div id="tagsContainer" style="margin-left: 8px">
+        </div>
+    </div>
+
     <div>
       <div>
         <label for="noteTextArea">Write a note</label>
       </div>
-      <textarea rows="10" cols="100" id="noteTextArea" ></textarea>
-      <div style="display: flex; justify-content: space-between;margin-bottom:12px;margin-top:8px;">
+      <textarea rows="10" cols="100" id="noteTextArea" placeholder="Write note here (Ctrl + Enter to save)"></textarea>
+      <div style="display: flex; justify-content: space-between;margin-bottom:16px;margin-top:8px;">
         <div>
           <div>
             <label for="noteTagsInput">Tag the note </label>
           </div>
-          <input id="noteTagsInput" placeholder="Tags (enter to confirm tag)">
+          <input id="noteTagsInput" placeholder="Tag name">
           <button onclick="addTagToNote()">Add tag</button>
         </div>
         <div>
@@ -31,11 +37,6 @@
 
       </div>
       <div id="savedNotesContainer"></div>
-    </div>
-    <div>
-      Tags
-        <div id="tagsContainer">
-        </div>
     </div>
   </body>
 </html>
