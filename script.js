@@ -1,4 +1,5 @@
 const notesLocalStorageKey = 'notes-saved';
+const tagsLocalStorageKey = 'notes-tags';
 let activeNote = null;
 let tags = ['All'];
 
@@ -6,7 +7,6 @@ let tags = ['All'];
 function getSavedNotes() {
   let notes = [];
   const rawNotes = localStorage.getItem(notesLocalStorageKey);
-  console.log(rawNotes);
   if (rawNotes) {
     notes = JSON.parse(rawNotes).map(x => new Note(x));
   }
@@ -30,7 +30,7 @@ class Note {
     this.dateCreated = config.dateCreated ? new Date(config.dateCreated) : new Date();
     this.id = config.id || `note-${this.dateCreated.getTime()}`;
     this.tags = config.tags || ['All'];
-    this.visible = config.visible || true;
+    this.visible = config.visible === false ? false : true;
   }
 
   get timeCreated() {
@@ -107,6 +107,7 @@ function renderNotes() {
     container.removeChild(container.firstChild);
   }
   getSavedNotes().forEach(note => {
+    console.log(note);
     if (!note.visible) {
       return;
     }
@@ -132,10 +133,14 @@ function renderTags() {
 }
 
 function filterNotesByTag(tag) {
-  notes = notes.map(note => {
+
+  const notes = getSavedNotes().map(note => {
     note.visible = note.tags.includes(tag);
     return note;
   });
+  console.log(notes);
+
+  localStorage.setItem(notesLocalStorageKey, JSON.stringify(notes));
   renderNotes();
 }
 
@@ -155,6 +160,14 @@ window.onload = () => {
       addTagToNote();
     }
   });
+  tags = ['All'];
+  getSavedNotes().forEach(note => {
+    tags = tags.concat(note.tags);
+  });
+  tags = tags.filter((tag, index) => tags.indexOf(tag) === index);
+
+
+  
   renderTags();
   renderNotes();
 };
